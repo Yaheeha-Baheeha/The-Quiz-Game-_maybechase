@@ -92,4 +92,21 @@ while time.time() < end_time:
 
     i += 1
 
+cash = int(cash)
+
+if cash <= 6000:
+    high = cash*10
+    low = cash/4
+elif cash <= 11000:
+    high = cash * 5
+    low = int(cash/2)
+elif cash <= 16000:
+    high = cash * int(random.choice([5,6,6,6,6]))
+    low = 2000
+else:
+    high = cash * 9
+    low = -1 * int(cash/2)
+    
+
+
 # h2h_list = get_questions(10, f'difficulty={h2h_type(cash)}','type=multiple')

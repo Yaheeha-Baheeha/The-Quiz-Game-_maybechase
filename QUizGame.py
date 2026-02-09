@@ -18,7 +18,12 @@ def get_questions(amount, difficulty, typE):
         data = response.json()
         
         if data['response_code'] == 0:
-            return data['results']
+            results = data['results']
+            for q in results:
+                q['question'] = html.unescape(q['question'])
+                q['correct_answer'] = html.unescape(q['correct_answer'])
+                q['incorrect_answers'] = [html.unescape(wrongey) for wrongey in q['incorrect_answers']]
+            return results
         else:
             print("Error: The API could not return results.")
             return []
@@ -52,7 +57,7 @@ def cash_builder(questiontext, right, wronglist, category, difficulty, cash):
         randlist[3],
         )
     response = input(" -> ")
-    if response == str(randlist.index(right)+1) or response == right:
+    if response == str(randlist.index(right)+1) or response.lower() == right.lower():
         print("\n\n CORRECT \n\n")
         if difficulty == "medium":
             cash = 3000
@@ -72,7 +77,7 @@ def cash_builder(questiontext, right, wronglist, category, difficulty, cash):
 
 
 end_time = time.time() + 60
-cash_builder_list = get_questions(60, f'difficulty={random.choice(["easy","medium","hard"])}','type=multiple')
+cash_builder_list = get_questions(80, f'difficulty={random.choice(["easy","medium","hard"])}','type=multiple')
 i= 0
 while time.time() < end_time:
 #     time_left = int(end_time - time.time())

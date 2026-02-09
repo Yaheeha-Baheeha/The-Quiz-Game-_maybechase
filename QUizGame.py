@@ -75,25 +75,28 @@ def cash_builder(questiontext, right, wronglist, category, difficulty, cash):
         pass
     
 
+def phase_one():
+    global cash
+    end_time = time.time() + 60
+    cash_builder_list = get_questions(80, f'difficulty={random.choice(["easy","medium","hard"])}','type=multiple')
+    i= 0
+    while time.time() < end_time:
+    #     time_left = int(end_time - time.time())
+    #     buttoninflet(f"{time_left} seconds remaining! \n 'Since question started'")
+        time.sleep(1)
+        dictT = cash_builder_list[i]
+        try:
+            cash += cash_builder(dictT["question"],dictT["correct_answer"],dictT["incorrect_answers"],dictT["category"],dictT["difficulty"],cash)
+        except:
+            pass
+        print(f"Cash ${cash}")
 
-end_time = time.time() + 60
-cash_builder_list = get_questions(80, f'difficulty={random.choice(["easy","medium","hard"])}','type=multiple')
-i= 0
-while time.time() < end_time:
-#     time_left = int(end_time - time.time())
-#     buttoninflet(f"{time_left} seconds remaining! \n 'Since question started'")
-    time.sleep(1)
-    dictT = cash_builder_list[i]
-    try:
-        cash += cash_builder(dictT["question"],dictT["correct_answer"],dictT["incorrect_answers"],dictT["category"],dictT["difficulty"],cash)
-    except:
-        pass
-    print(f"Cash ${cash}")
+        i += 1
 
-    i += 1
+    cash = int(cash)
 
-cash = int(cash)
 
+phase_one()
 if cash <= 6000:
     high = cash*10
     low = cash/4
@@ -106,7 +109,7 @@ elif cash <= 16000:
 else:
     high = cash * 9
     low = -1 * int(cash/2)
-    
+print(cash) 
 
 
 # h2h_list = get_questions(10, f'difficulty={h2h_type(cash)}','type=multiple')

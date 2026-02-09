@@ -5,6 +5,7 @@ import time
 
 
 
+
 cash = 0
 
 
@@ -70,7 +71,7 @@ def cash_builder(questiontext, right, wronglist, category, difficulty, cash):
             return cash
         pass
     else:
-        print("\n\n wrong \n\n")
+        print(f"\n\n wrong \n\n{right}\n\n")
         #wrong booooo
         pass
     

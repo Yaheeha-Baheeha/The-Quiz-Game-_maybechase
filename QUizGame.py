@@ -1,12 +1,15 @@
+import flet as ft
+from flet import TextField
+from flet_core.control_event import ControlEvent
 import requests
 import html
 import random
 import time
-
-
-
 cash = 0
 
+
+def main(page: ft.Page) -> None:
+    page.title = 'The follow'
 
 
 def get_questions(amount, difficulty, typE):

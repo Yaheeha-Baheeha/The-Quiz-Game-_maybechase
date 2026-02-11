@@ -191,7 +191,7 @@ def main(page: ft.Page) -> None:
 
         cash_builder_list = get_questions(50, f'difficulty={random.choice(["easy", "medium", "hard"])}','type=multiple')
         time.sleep(2)
-        cash_builder_list_return_of_the_jedi.append(get_questions(30, f'difficulty={random.choice(["easy", "medium", "hard"])}','type=multiple'))
+        cash_builder_list_return_of_the_jedi = get_questions(30, f'difficulty={random.choice(["easy", "medium", "hard"])}','type=multiple')
         cash_builder_list.extend(cash_builder_list_return_of_the_jedi)
         i = 0
         if cash_builder_list:

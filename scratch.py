@@ -23,9 +23,16 @@ def main(page: ft.Page) -> None:
                 data=0,
                 on_click=1 + 1,
             ),
-            message := ft.Text()
+            alignment = ft.MainAxisAlignment.CENTER
         )
     )
+    def potato(chicken):
+        page.add(
+            ft.Row(
+                controls=[ft.Text(value=chicken, size = 20)],
+            )
+        )
+    potato("banana")
 
 if __name__ == '__main__':
     ft.run(main)

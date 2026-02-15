@@ -18,6 +18,11 @@ def main(page: ft.Page) -> None:
     timer_running = True
     page.title = 'The follow'
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
+    page.window.width = 1280
+    page.window.height = 720
+    page.window.resizable = False
+    page.window.maximizable = False
+    page.update()
     cashbuilderqs = 80
 
     def get_questions(amount, difficulty, typE):
@@ -39,10 +44,100 @@ def main(page: ft.Page) -> None:
             return []
 
     def phase_two():
-        nonlocal cash, low, high
+        nonlocal cash, low, high, i
+        i = 0
         page.clean()
-        def the_chase():
-            pass
+        def the_chase(diff):
+            nonlocal high, low, cash
+            page.clean()
+            difficulty = "medium"
+            if diff == "high":
+                cash = high
+                difficulty = "hard"
+            elif diff == "low":
+                cash = low
+                difficulty = "easy"
+
+            chase_list=get_questions(50, difficulty, "type=multiple")
+            a_question = chase_list[i]
+
+            def iterate_questions(question, right, wrongs, category, difficulty):
+                nonlocal cash, i
+                questions = wrongs
+                questions.append(right)
+                randlist = random.sample(questions, len(questions))
+
+                page.add(
+                    ft.Row(
+                        controls=[
+                            ft.Container(
+                                content=ft.Column(
+                                    controls=[
+                                        ft.Row(
+                                            controls=[
+                                                ft.Text(value="Choose your offer", size=120)
+                                            ],
+                                            alignment=ft.MainAxisAlignment.CENTER
+                                        ),
+                                        ft.Row(
+                                            controls=[
+                                                low_offer := ft.Button(
+                                                    content=ft.Text(value=f"Low offer: {low}", size=60),
+                                                    data=low,
+                                                    on_click=the_chase
+                                                ),
+                                                cash_offer := ft.Button(
+                                                    content=ft.Text(value=f"Cash offer: {cash}", size=60),
+                                                    data=cash,
+                                                    on_click=the_chase
+                                                ),
+                                                high_offer := ft.Button(
+                                                    content=ft.Text(value=f"High offer: {high}", size=60),
+                                                    data=high,
+                                                    on_click=the_chase
+                                                ),
+                                            ],
+                                            alignment=ft.MainAxisAlignment.CENTER
+                                        ),
+                                        ft.Row(
+                                            controls=[
+                                                ft.Text(
+                                                    value="^This gives you a 4 questions advantage.                          This gives you 3.                                                  This gives you 2",
+                                                    size=20)
+                                            ]
+                                        )
+                                    ]
+                                ),
+                                bgcolor="blue",
+                                expand=2,
+                            ),
+                            ft.Container(
+                                content=ft.Column(
+                                    controls=[
+                                        ft.Text("im gunn put a thingy here"),
+                                        ft.TextField(label="have fun for now")
+                                    ]
+                                ),
+                                bgcolor="green",
+                                expand=1,
+                            ),
+                        ],
+                        expand=True,
+                    )
+                )
+                page.update()
+
+
+            iterate_questions(
+                a_question["question"],
+                a_question["correct_answer"],
+                a_question["incorrect_answers"],
+                a_question["category"],
+                a_question["difficulty"],
+            )
+
+
+
         page.add(
             ft.Row(
                 controls=[
@@ -51,34 +146,33 @@ def main(page: ft.Page) -> None:
                 alignment=ft.MainAxisAlignment.CENTER
             ),
             ft.Row(
-                low_offer := ft.Button(
-                    content = ft.Text(value=f"Low offer: {low}", size=90),
-                    data=low,
-                    on_click=the_chase
-                ),
-                cash_offer := ft.Button(
-                    content = ft.Text(value=f"Cash offer: {cash}", size=90),
-                    data=cash,
-                    on_click=the_chase
-                ),
-                high_offer := ft.Button(
-                    content = ft.Text(value=f"High offer: {high}", size=90),
-                    data=high,
-                    on_click=the_chase
-                )
+                controls=[
+                    low_offer := ft.Button(
+                        content=ft.Text(value=f"Low offer: {low}", size=60),
+                        data="low",
+                        on_click=the_chase
+                    ),
+                    cash_offer := ft.Button(
+                        content=ft.Text(value=f"Cash offer: {cash}", size=60),
+                        data='cash',
+                        on_click=the_chase
+                    ),
+                    high_offer := ft.Button(
+                        content=ft.Text(value=f"High offer: {high}", size=60),
+                        data='high',
+                        on_click=the_chase
+                    ),
+                ],
+                alignment=ft.MainAxisAlignment.CENTER
             ),
             ft.Row(
                 controls=[
-                    ft.Text(value="^This gives you a 4 questions advantage.   this gives you 3.          this gives you 2", size=50)
+                    ft.Text(
+                        value="^This gives you a 4 questions advantage.                          This gives you 3.                                                  This gives you 2",
+                        size=20)
                 ]
             )
         )
-        # button_3 := ft.Button(
-        #     content=ft.Text(randlist[2]),
-        #     data=randlist[2],
-        #     on_click=check_answer,
-        # ),
-
 
     def cash_builder(questiontext, right, wronglist, category, difficulty,timer_text):
         nonlocal randlist, timer_running, secs, cash, low, high
@@ -154,7 +248,7 @@ def main(page: ft.Page) -> None:
 
         page.add(
             ft.Row(
-                controls=[ft.Text(value=f"You have ${cash}", size=10, color='green')],
+                controls=[ft.Text(value=f"You have ${cash}", size=18, color='green')],
                 alignment=ft.MainAxisAlignment.END
             ),
             ft.Row(
@@ -162,7 +256,7 @@ def main(page: ft.Page) -> None:
                 alignment=ft.MainAxisAlignment.CENTER
             ),
             ft.Row(
-                controls=[ft.Text(value=f"\nCategory: {category}", size=20)],
+                controls=[ft.Text(value=f"Category: {category}", size=22)],
                 alignment=ft.MainAxisAlignment.CENTER
             ),
             ft.Row(

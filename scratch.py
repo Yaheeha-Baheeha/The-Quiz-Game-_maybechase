@@ -1,38 +1,27 @@
 import flet as ft
-from flet import TextField
-from flet_core.control_event import ControlEvent
 
-def main(page: ft.Page) -> None:
-    cash = 0
-    cash_talk = "abcdefghijklmnopqrstuvwxyz"
-    page.title = 'The follow'
-    page.vertical_alignment = ft.MainAxisAlignment.CENTER
-    qtextfield = "\n \n fancyquestionwowoow"
+
+def main(page: ft.Page):
     page.add(
-        ft.Row(
-            controls=[ft.Text(value=cash_talk, size = 20)],
-            alignment = ft.MainAxisAlignment.CENTER
-        ),
-        ft.Row(
-            controls=[ft.Text(value=qtextfield, size = 20)],
-            alignment = ft.MainAxisAlignment.CENTER
-        ),
-        ft.Row(
-            button := ft.Button(
-                content="buttoj",
-                data=0,
-                on_click=1 + 1,
-            ),
-            alignment = ft.MainAxisAlignment.CENTER
+        ft.Text(
+            spans=[
+                ft.TextSpan(
+                    text="The Chase",
+                    style=ft.TextStyle(
+                        size=40,
+                        weight=ft.FontWeight.BOLD,
+                        foreground=ft.Paint(
+                            gradient=ft.PaintLinearGradient(
+                                begin=(0, 20),
+                                end=(150, 20),
+                                colors=[ft.Colors.RED, ft.Colors.YELLOW],
+                            )
+                        ),
+                    ),
+                ),
+            ],
         )
     )
-    def potato(chicken):
-        page.add(
-            ft.Row(
-                controls=[ft.Text(value=chicken, size = 20)],
-            )
-        )
-    potato("banana")
 
-if __name__ == '__main__':
-    ft.run(main)
+
+ft.run(main)

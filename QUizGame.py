@@ -9,6 +9,8 @@ import threading
 
 def main(page: ft.Page) -> None:
     cash = 0
+    high = 0
+    low = 0
     i = 0
     secs = 60
     cash_builder_list = []
@@ -17,7 +19,6 @@ def main(page: ft.Page) -> None:
     page.title = 'The follow'
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
     cashbuilderqs = 80
-
 
     def get_questions(amount, difficulty, typE):
         url = f"https://opentdb.com/api.php?amount={amount}&{difficulty}&{typE}"
@@ -37,8 +38,50 @@ def main(page: ft.Page) -> None:
             print(f"Error: {e}")
             return []
 
+    def phase_two():
+        nonlocal cash, low, high
+        page.clean()
+        def the_chase():
+            pass
+        page.add(
+            ft.Row(
+                controls=[
+                    ft.Text(value="Choose your offer", size=120)
+                ],
+                alignment=ft.MainAxisAlignment.CENTER
+            ),
+            ft.Row(
+                low_offer := ft.Button(
+                    content = ft.Text(value=f"Low offer: {low}", size=90),
+                    data=low,
+                    on_click=the_chase
+                ),
+                cash_offer := ft.Button(
+                    content = ft.Text(value=f"Cash offer: {cash}", size=90),
+                    data=cash,
+                    on_click=the_chase
+                ),
+                high_offer := ft.Button(
+                    content = ft.Text(value=f"High offer: {high}", size=90),
+                    data=high,
+                    on_click=the_chase
+                )
+            ),
+            ft.Row(
+                controls=[
+                    ft.Text(value="^This gives you a 4 questions advantage.   this gives you 3.          this gives you 2", size=50)
+                ]
+            )
+        )
+        # button_3 := ft.Button(
+        #     content=ft.Text(randlist[2]),
+        #     data=randlist[2],
+        #     on_click=check_answer,
+        # ),
+
+
     def cash_builder(questiontext, right, wronglist, category, difficulty,timer_text):
-        nonlocal randlist, timer_running, secs, cash
+        nonlocal randlist, timer_running, secs, cash, low, high
         if timer_running == False:
             secs = 60
 
@@ -50,7 +93,7 @@ def main(page: ft.Page) -> None:
             phase_one()
 
         def check_answer(e):
-            nonlocal cash, i, cashbuilderqs
+            nonlocal cash, i, cashbuilderqs, low, high
             response = e.control.data
 
             if response == right:
@@ -78,7 +121,8 @@ def main(page: ft.Page) -> None:
                 if cashbuilderqs > 0:
                     run_next_question(timer_text)
                 else:
-                    pass #next round here
+                    phase_two()
+                    return
             else:
                 print(f"Wrong")
                 i+=1
@@ -87,7 +131,8 @@ def main(page: ft.Page) -> None:
                 if cashbuilderqs > 0:
                     run_next_question(timer_text)
                 else:
-                    pass  #next round here
+                    phase_two()
+                    return
                 page.update()
             if cash <= 6000:
                 high = cash * 10
@@ -163,6 +208,8 @@ def main(page: ft.Page) -> None:
             dictT = cash_builder_list[i]
         except IndexError as e:
             print(f"Error: {e}")
+            phase_two()
+            return
         cash_builder(
             dictT["question"],
             dictT["correct_answer"],
@@ -185,12 +232,15 @@ def main(page: ft.Page) -> None:
                     timer_text.update()
                 except Exception as e:
                     print(f"Error: {e}")
+                    phase_two()
+                    return
             timer_running = False
             print("successs")
-            pass #add next phase here
-
+            phase_two()
+            return
+        page.clean()
         cash_builder_list = get_questions(50, f'difficulty={random.choice(["easy", "medium", "hard"])}','type=multiple')
-        time.sleep(2)
+        time.sleep(5)
         cash_builder_list_return_of_the_jedi = get_questions(30, f'difficulty={random.choice(["easy", "medium", "hard"])}','type=multiple')
         cash_builder_list.extend(cash_builder_list_return_of_the_jedi)
         i = 0
@@ -201,9 +251,39 @@ def main(page: ft.Page) -> None:
             timer_thread = threading.Thread(target=s60_sec, daemon=True)
             timer_thread.start()
 
+    page.add(
+        ft.Row(
+            ft.Text(
+                spans=[
+                    ft.TextSpan(
+                        text="The Chase",
+                        style=ft.TextStyle(
+                            size=150,
+                            weight=ft.FontWeight.BOLD,
+                            foreground=ft.Paint(
+                                gradient=ft.PaintLinearGradient(
+                                    begin=(0, 1200),
+                                    end=(1100,20),
+                                    colors=["blue", "white"],
+                                )
+                            )
+                        )
+                    )
+                ],
+            ),
+            alignment = ft.MainAxisAlignment.CENTER,
+        ),
+        ft.Row(
+            controls=[
+                start_button := ft.Button(
+                    content = ft.Text(value="START CHASE", size=100, color='blue'),
+                    on_click = phase_one
+                )
+            ],
+            alignment=ft.MainAxisAlignment.CENTER
+        ),
+    )
 
-
-    phase_one()
 
 
     # h2h_list = get_questions(10, f'difficulty={h2h_type(cash)}','type=multiple')

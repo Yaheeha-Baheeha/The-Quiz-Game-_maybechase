@@ -91,8 +91,8 @@ def main(page: ft.Page) -> None:
                 if response == right:
                     l += 1
                     chase_ladder[l].bgcolor = "0xff3380de"
-                    if l >= 7 or p >= 7:
-                        pass #next stage here
+                    if l >= 7:
+                        #last_phase()
                     else:
                         i+=1
                         start_question(h2h_list[i]["question"], h2h_list[i]["correct_answer"],
@@ -101,12 +101,17 @@ def main(page: ft.Page) -> None:
 
 
                 elif l == p:
-                    pass #lose here
+                    page.window.destroy()
                 if random.random() <= 0.84:
                     p += 1
                     chase_ladder[p].bgcolor = "red"
                     if l == p:
-                        pass #lose here
+                        page.window.destroy()
+                    else:
+                        i += 1
+                        start_question(h2h_list[i]["question"], h2h_list[i]["correct_answer"],
+                                       h2h_list[i]["incorrect_answers"], h2h_list[i]["category"],
+                                       h2h_list[i]["difficulty"])
                 else:
                     if p <= l or p<=7:
                         i += 1
@@ -114,7 +119,8 @@ def main(page: ft.Page) -> None:
                                        h2h_list[i]["incorrect_answers"], h2h_list[i]["category"],
                                        h2h_list[i]["difficulty"])
                     else:
-                        pass #lose here
+                        page.window.destroy()
+                right_side.update()
 
 
             left_side.content = ft.Column(
@@ -238,7 +244,7 @@ def main(page: ft.Page) -> None:
             ft.Row(
                 controls=[
                     left_side,
-                    right_side,  # dont forget ts (remember)
+                    right_side,  
                 ],
                 expand=True,
             )
@@ -266,7 +272,7 @@ def main(page: ft.Page) -> None:
             nonlocal cash, i, cash_builder_qs, low, high
             response = e.control.data
 
-            if response == right:
+            if response.lower() == right.lower():
                 print("\n\n CORRECT \n\n")
                 page.clean()
                 time.sleep(0.05)

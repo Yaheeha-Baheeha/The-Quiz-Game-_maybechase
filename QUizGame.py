@@ -14,7 +14,7 @@ def main(page: ft.Page) -> None:
     i = 0
     secs = 60
     cash_builder_list = []
-    randlist = []
+    rand_list = []
     timer_running = True
     page.title = 'The Chase'
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
@@ -23,7 +23,7 @@ def main(page: ft.Page) -> None:
     page.window.resizable = False
     page.window.maximizable = False
     page.update()
-    cashbuilderqs = 80
+    cash_builder_qs = 80
 
     def get_questions(amount, difficulty, typE):
         url = f"https://opentdb.com/api.php?amount={amount}&{difficulty}&{typE}"
@@ -44,20 +44,22 @@ def main(page: ft.Page) -> None:
             return []
 
     def phase_two():
-        nonlocal cash, low, high, page
+        nonlocal cash, low, high, page, i
+        i = 0
         page.window.width = 1920
         page.window.height = 720
         l = 0
+        p = 0
         page.clean()
         chase_ladder = [
-            ft.Container(height=90, width=600, bgcolor="white"),
-            ft.Container(height=90, width=600, bgcolor="white"),
-            ft.Container(height=90, width=600, bgcolor="white"),
-            ft.Container(height=90, width=600, bgcolor="white"),
-            ft.Container(height=90, width=600, bgcolor="white"),
-            ft.Container(height=90, width=600, bgcolor="white"),
-            ft.Container(height=90, width=600, bgcolor="white"),
-        ]  # and this (remember)
+            ft.Container(height=90, width=600, bgcolor="0xff0022ff"),
+            ft.Container(height=90, width=600, bgcolor="0xff0022ff"),
+            ft.Container(height=90, width=600, bgcolor="0xff0022ff"),
+            ft.Container(height=90, width=600, bgcolor="0xff0022ff"),
+            ft.Container(height=90, width=600, bgcolor="0xff0022ff"),
+            ft.Container(height=90, width=600, bgcolor="0xff0022ff"),
+            ft.Container(height=90, width=600, bgcolor="0xff0022ff"),
+        ]
         right_side = ft.Container(
             content=ft.Column(
                 controls=[
@@ -74,20 +76,107 @@ def main(page: ft.Page) -> None:
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 alignment=ft.MainAxisAlignment.CENTER
             ),
-            bgcolor="green",
+            bgcolor="black",
             expand=1,
-        )  # also this (remember)
+        )
+        def start_question(question_text, right, wrong_list, category, difficulty):
+            nonlocal p, i, l, right_side, left_side, chase_ladder
+            questions = wrong_list
+            questions.append(right)
+            rand_list = random.sample(questions, len(questions))
+            def check_answer(answer):
+                nonlocal right, l, p, i, right_side, left_side, chase_ladder
+                if answer == right:
+                    l += 1
+                    chase_ladder[l].bgcolor = "0xff3380de"
+                    if l >= 7 or p >= 7:
+                        pass #next stage here
+                elif l == p:
+                    pass #lose here
+                if random.random() <= 0.84:
+                    p += 1
+                    chase_ladder[p].bgcolor = "red"
+                    if l == p:
+                        pass #lose here
+                else:
+                    pass
 
-        def the_chase():
-            nonlocal l, right_side, low, cash, high, chase_ladder
-            chase_ladder[1].bgcolor = "red"  # ts very important (remember)
-            chase_ladder[2].bgcolor = "blue"
+
+            left_side.content = ft.Column(
+                controls = [
+                    ft.Row(
+                        controls=[ft.Text(value=f"You have ${cash}", size=18, color='green')],
+                        alignment=ft.MainAxisAlignment.END
+                    ),
+                    ft.Row(
+                        controls=[ft.Text(value=question_text, size=25)],
+                        alignment=ft.MainAxisAlignment.CENTER
+                    ),
+                    ft.Row(
+                        controls=[ft.Text(value=f"Category: {category}", size=22)],
+                        alignment=ft.MainAxisAlignment.CENTER
+                    ),
+                    ft.Row(
+                        controls=[
+                            button_1 := ft.Button(
+                                content=ft.Text(rand_list[0]),
+                                data=rand_list[0],
+                                on_click=check_answer,
+                            ),
+                            button_2 := ft.Button(
+                                content=ft.Text(rand_list[1]),
+                                data=rand_list[1],
+                                on_click=check_answer,
+                            )
+                        ],
+                        alignment=ft.MainAxisAlignment.CENTER
+                    ),
+                    ft.Row(
+                        controls=[
+                            button_3 := ft.Button(
+                                content=ft.Text(rand_list[2]),
+                                data=rand_list[2],
+                                on_click=check_answer,
+                            ),
+                            button_4 := ft.Button(
+                                content=ft.Text(rand_list[3]),
+                                data=rand_list[3],
+                                on_click=check_answer,
+                            )
+                        ],
+                        alignment=ft.MainAxisAlignment.CENTER
+                    )
+                ]
+            )
+            left_side.update()
+            i+=1
+
+        def head_to_head(diff):
+            nonlocal l, right_side, low, cash, high, chase_ladder, p, i
+            chase_ladder[0].bgcolor = "cyan"
+            if diff == "hard":
+                chase_ladder[1].bgcolor = "0xff3380de"
+                cash = high
+                l = 1
+                p = -1
+            elif diff == "easy":
+                chase_ladder[1].bgcolor = "cyan"
+                chase_ladder[2].bgcolor = "cyan"
+                chase_ladder[3].bgcolor = "0xff3380de"
+                cash = low
+                l = 3
+                p = -1
+            elif diff == "medium":
+                chase_ladder[1].bgcolor = "cyan"
+                chase_ladder[2].bgcolor = "0xff3380de"
+                l = 2
+                p = -1
             right_side.update()
+            h2h_list = get_questions(30, diff, "type=multiple")
+            start_question(h2h_list[i]["question"],h2h_list[i]["correct_answer"],h2h_list[i]["incorrect_answers"],h2h_list[i]["category"],h2h_list[i]["difficulty"])
 
-        page.add(
-            ft.Row(
-                controls=[
-                    ft.Container(
+
+        left_side = ft.Container(
                         content=ft.Column(
                             controls=[
                                 ft.Row(
@@ -99,19 +188,19 @@ def main(page: ft.Page) -> None:
                                 ft.Row(
                                     controls=[
                                         low_offer := ft.Button(
-                                            content=ft.Text(value=f"Low offer: \n${low}", size=60),
-                                            data=low,
-                                            on_click=the_chase
+                                            content=ft.Text(value=f"Low offer: \n$ {low}", size=60),
+                                            data='easy',
+                                            on_click=head_to_head
                                         ),
                                         cash_offer := ft.Button(
-                                            content=ft.Text(value=f"Cash offer: \n${cash}", size=60),
-                                            data=cash,
-                                            on_click=the_chase
+                                            content=ft.Text(value=f"Cash offer: \n$ {cash}", size=60),
+                                            data='medium',
+                                            on_click=head_to_head
                                         ),
                                         high_offer := ft.Button(
-                                            content=ft.Text(value=f"High offer: \n${high}", size=60),
-                                            data=high,
-                                            on_click=the_chase
+                                            content=ft.Text(value=f"High offer: \n$ {high}", size=60),
+                                            data='hard',
+                                            on_click=head_to_head
                                         ),
                                     ],
                                     alignment=ft.MainAxisAlignment.CENTER
@@ -127,8 +216,12 @@ def main(page: ft.Page) -> None:
                         ),
                         bgcolor="blue",
                         expand=2,
-                    ),
+                    )
 
+        page.add(
+            ft.Row(
+                controls=[
+                    left_side,
                     right_side,  # dont forget ts (remember)
                 ],
                 expand=True,
@@ -141,8 +234,8 @@ def main(page: ft.Page) -> None:
 
 
 
-    def cash_builder(questiontext, right, wronglist, category, difficulty,timer_text):
-        nonlocal randlist, timer_running, secs, cash, low, high
+    def cash_builder(question_text, right, wrong_list, category, difficulty, timer_text):
+        nonlocal rand_list, timer_running, secs, cash, low, high
         if timer_running == False:
             secs = 60
 
@@ -154,7 +247,7 @@ def main(page: ft.Page) -> None:
             phase_one()
 
         def check_answer(e):
-            nonlocal cash, i, cashbuilderqs, low, high
+            nonlocal cash, i, cash_builder_qs, low, high
             response = e.control.data
 
             if response == right:
@@ -177,9 +270,9 @@ def main(page: ft.Page) -> None:
                     cash += 5500
 
                 i += 1
-                cashbuilderqs -= 1
-                print(cashbuilderqs)
-                if cashbuilderqs > 0:
+                cash_builder_qs -= 1
+                print(cash_builder_qs)
+                if cash_builder_qs > 0:
                     run_next_question(timer_text)
                 else:
                     phase_two()
@@ -187,9 +280,9 @@ def main(page: ft.Page) -> None:
             else:
                 print(f"Wrong")
                 i+=1
-                cashbuilderqs -= 1
-                print(cashbuilderqs)
-                if cashbuilderqs > 0:
+                cash_builder_qs -= 1
+                print(cash_builder_qs)
+                if cash_builder_qs > 0:
                     run_next_question(timer_text)
                 else:
                     phase_two()
@@ -209,9 +302,9 @@ def main(page: ft.Page) -> None:
                 low = -1 * int(cash / 2)
 
         page.clean()
-        questions = wronglist
+        questions = wrong_list
         questions.append(right)
-        randlist = random.sample(questions, len(questions))
+        rand_list = random.sample(questions, len(questions))
 
         page.add(
             ft.Row(
@@ -219,7 +312,7 @@ def main(page: ft.Page) -> None:
                 alignment=ft.MainAxisAlignment.END
             ),
             ft.Row(
-                controls=[ft.Text(value=questiontext, size=25)],
+                controls=[ft.Text(value=question_text, size=25)],
                 alignment=ft.MainAxisAlignment.CENTER
             ),
             ft.Row(
@@ -233,13 +326,13 @@ def main(page: ft.Page) -> None:
             ft.Row(
                 controls=[
                     button_1 := ft.Button(
-                        content=ft.Text(randlist[0]),
-                        data=randlist[0],
+                        content=ft.Text(rand_list[0]),
+                        data=rand_list[0],
                         on_click=check_answer,
                     ),
                     button_2 := ft.Button(
-                        content=ft.Text(randlist[1]),
-                        data=randlist[1],
+                        content=ft.Text(rand_list[1]),
+                        data=rand_list[1],
                         on_click=check_answer,
                     )
                 ],
@@ -248,13 +341,13 @@ def main(page: ft.Page) -> None:
             ft.Row(
                 controls=[
                     button_3 := ft.Button(
-                        content=ft.Text(randlist[2]),
-                        data=randlist[2],
+                        content=ft.Text(rand_list[2]),
+                        data=rand_list[2],
                         on_click=check_answer,
                     ),
                     button_4 := ft.Button(
-                        content=ft.Text(randlist[3]),
-                        data=randlist[3],
+                        content=ft.Text(rand_list[3]),
+                        data=rand_list[3],
                         on_click=check_answer,
                     )
                 ],
@@ -351,9 +444,6 @@ def main(page: ft.Page) -> None:
         ),
     )
 
-
-
-    # h2h_list = get_questions(10, f'difficulty={h2h_type(cash)}','type=multiple')
 
 if __name__ == '__main__':
     ft.run(main)

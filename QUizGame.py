@@ -46,6 +46,7 @@ def main(page: ft.Page) -> None:
     def phase_two():
         nonlocal cash, low, high, page, i
         i = 0
+        h2h_list = []
         page.window.width = 1920
         page.window.height = 720
         l = 0
@@ -80,17 +81,25 @@ def main(page: ft.Page) -> None:
             expand=1,
         )
         def start_question(question_text, right, wrong_list, category, difficulty):
-            nonlocal p, i, l, right_side, left_side, chase_ladder
+            nonlocal p, i, l, right_side, left_side, chase_ladder, h2h_list
             questions = wrong_list
             questions.append(right)
             rand_list = random.sample(questions, len(questions))
             def check_answer(answer):
                 nonlocal right, l, p, i, right_side, left_side, chase_ladder
-                if answer == right:
+                response = answer.control.data
+                if response == right:
                     l += 1
                     chase_ladder[l].bgcolor = "0xff3380de"
                     if l >= 7 or p >= 7:
                         pass #next stage here
+                    else:
+                        i+=1
+                        start_question(h2h_list[i]["question"], h2h_list[i]["correct_answer"],
+                                       h2h_list[i]["incorrect_answers"], h2h_list[i]["category"],
+                                       h2h_list[i]["difficulty"])
+
+
                 elif l == p:
                     pass #lose here
                 if random.random() <= 0.84:
@@ -99,7 +108,13 @@ def main(page: ft.Page) -> None:
                     if l == p:
                         pass #lose here
                 else:
-                    pass
+                    if p <= l or p<=7:
+                        i += 1
+                        start_question(h2h_list[i]["question"], h2h_list[i]["correct_answer"],
+                                       h2h_list[i]["incorrect_answers"], h2h_list[i]["category"],
+                                       h2h_list[i]["difficulty"])
+                    else:
+                        pass #lose here
 
 
             left_side.content = ft.Column(
@@ -151,9 +166,10 @@ def main(page: ft.Page) -> None:
             left_side.update()
             i+=1
 
-        def head_to_head(diff):
-            nonlocal l, right_side, low, cash, high, chase_ladder, p, i
+        def head_to_head(diffs):
+            nonlocal l, right_side, low, cash, high, chase_ladder, p, i, h2h_list
             chase_ladder[0].bgcolor = "cyan"
+            diff = diffs.control.data
             if diff == "hard":
                 chase_ladder[1].bgcolor = "0xff3380de"
                 cash = high

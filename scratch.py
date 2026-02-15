@@ -1,6 +1,9 @@
 import flet as ft
+from flet_core.border_radius import horizontal
+
 
 def main(page: ft.Page) -> None:
+    l = 2
     print(page.window.width, page.window.height)
     page.title = 'The follow'
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
@@ -9,15 +12,50 @@ def main(page: ft.Page) -> None:
     page.window.resizable = False
     page.window.maximizable = False
     page.update()
-    def the_chase():
-        pass
+
     low = 9
     cash = 10
     high = 11
+
+    chase_ladder = [
+        ft.Container(height=90, width=600, bgcolor="white"),
+        ft.Container(height=90, width=600, bgcolor="white"),
+        ft.Container(height=90, width=600, bgcolor="white"),
+        ft.Container(height=90, width=600, bgcolor="white"),
+        ft.Container(height=90, width=600, bgcolor="white"),
+        ft.Container(height=90, width=600, bgcolor="white"),
+        ft.Container(height=90, width=600, bgcolor="white"),
+    ] #and this (remember)
+    right_side = ft.Container(
+                        content=ft.Column(
+                            controls=[
+                                chase_ladder[0],
+                                chase_ladder[1],
+                                chase_ladder[2],
+                                chase_ladder[3],
+                                chase_ladder[4],
+                                chase_ladder[5],
+                                chase_ladder[6],
+
+                            ],
+                            spacing=1,
+                            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                            alignment=ft.MainAxisAlignment.CENTER
+                        ),
+                        bgcolor="green",
+                        expand=1,
+                    )   #also this (remember)
+    def the_chase():
+        nonlocal l,right_side, low, cash, high, chase_ladder
+        chase_ladder[1].bgcolor="red"           #ts very important (remember)
+        chase_ladder[2].bgcolor="blue"
+        right_side.update()
+
+
+
     page.add(
         ft.Row(
             controls=[
-                # --- LEFT SIDE (Width = 2) ---
                 ft.Container(
                     content=ft.Column(
                         controls=[
@@ -57,24 +95,15 @@ def main(page: ft.Page) -> None:
                         ]
                     ),
                     bgcolor="blue",
-                    expand=2,  # Takes up 1 "share" of the space
+                    expand=2,
                 ),
 
-                # --- RIGHT SIDE (Width = 1) ---
-                ft.Container(
-                    content=ft.Column(
-                        controls=[
-                            ft.Text("I am on the RIGHT!"),
-                            ft.TextField(label="Type here")
-                        ]
-                    ),
-                    bgcolor="green",
-                    expand=1,  # Takes up 1 "share" of the space (so 50/50 total)
-                ),
+                right_side,   #dont forget ts (remember)
             ],
-            expand=True,  # Make the row fill the whole vertical height
+            expand=True,
         )
     )
+    page.update()
 
 
 

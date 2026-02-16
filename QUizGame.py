@@ -6,6 +6,7 @@ import random
 import time
 import threading
 import os
+import asyncio
 
 def main(page: ft.Page) -> None:
     cash = 0
@@ -15,7 +16,7 @@ def main(page: ft.Page) -> None:
     lost = False
     secs = 60
     textanswer = ""
-    prev_right = ""
+    prev_right = ["",""]
     cash_builder_list = []
     rand_list = []
     timer_running = True
@@ -72,6 +73,7 @@ def main(page: ft.Page) -> None:
                 except IndexError as e:
                     print(f"Error: {e}")
                     phase_two()
+                    timer_running = False
                     return
                 finally_therock(
                     dictT["question"],
@@ -129,13 +131,14 @@ def main(page: ft.Page) -> None:
                 ),
                 ft.Row(
                     controls=[
-                        ft.Text(value=f'previous answer "{prev_right}"', size=22, color='pink')
+                        ft.Text(value=f'previous answer "{prev_right[1]}", correct answer: "{prev_right[0]}"', size=22, color='pink')
                     ]
                 )
             )
             page.update()
         secs = 120
-        timer_text = ft.Text(value="60 seconds remaining...", size=15, color="red")
+        timer_text = ft.Text(value="120 seconds remaining...", size=15, color="red")
+        timer_running = True
         def check_answer(e):
             nonlocal score, i, cash_builder_qs, prev_right, textanswer
 
@@ -145,14 +148,12 @@ def main(page: ft.Page) -> None:
             if textanswer.lower() == rights.lower():
                 print("\n\n CORRECT \n\n")
                 page.clean()
-                time.sleep(0.05)
                 page.add(
                     ft.Row(
                         controls=[ft.Text(value="CORRECT", size=20)],
                         alignment=ft.MainAxisAlignment.CENTER
                     ),
                 )
-                time.sleep(0.2)
                 page.update()
                 page.clean()
                 score += 1
@@ -179,32 +180,32 @@ def main(page: ft.Page) -> None:
 
             response = ""
 
-        def s120_sec():
+        async def s120_sec():
             nonlocal timer_running, secs, timer_text
             while secs > 0 and timer_running:
-                time.sleep(1)
+                await asyncio.sleep(1)
                 secs -= 1
                 timer_text.value = f"{secs} seconds remaining..."
                 try:
                     timer_text.update()
-                except IndexError as e:
-                    print(f"Error: {e}")
-                    phase_two()
-                    return
                 except Exception as e:
-                    print(f"Error: {e}")
-        cash_builder_list = get_questions(50, 'hard','type=multiple')
-        time.sleep(5)
-        cash_builder_list_return_of_the_jedi = get_questions(30, 'hard','type=multiple')
-        cash_builder_list.extend(cash_builder_list_return_of_the_jedi)
-        i = 0
+                    print(f"Error updating timer: {e}")
+            timer_running = False
+            print("120-second timer finished")
+            phase_chaser()
 
-        if cash_builder_list:
-            print(len(cash_builder_list))
-            run_next_question2(timer_text)
-            timer_running = True
-            timer_thread = threading.Thread(target=s120_sec, daemon=True)
-            timer_thread.start()
+        async def load_questions():
+            nonlocal cash_builder_list, i
+            cash_builder_list = get_questions(50, 'hard', 'type=multiple')
+            await asyncio.sleep(0.1)
+            cash_builder_list += get_questions(30, 'hard', 'type=multiple')
+            i = 0
+            if cash_builder_list:
+                print(f"{len(cash_builder_list)} questions loaded")
+                run_next_question2(timer_text)
+
+        page.run_task(load_questions)
+        page.run_task(s120_sec)
 
 
 
@@ -213,7 +214,6 @@ def main(page: ft.Page) -> None:
     def handle_field_change(e):
         nonlocal textanswer
         textanswer = e.control.value
-        # print(textanswer)
 
     def get_questions(amount, difficulty, typE):
         url = f"https://opentdb.com/api.php?amount={amount}&{difficulty}&{typE}"
@@ -501,14 +501,12 @@ def main(page: ft.Page) -> None:
             if textanswer == right.lower():
                 print("\n\n CORRECT \n\n")
                 page.clean()
-                time.sleep(0.05)
                 page.add(
                     ft.Row(
                         controls=[ft.Text(value="CORRECT", size=20)],
                         alignment=ft.MainAxisAlignment.CENTER
                     ),
                 )
-                time.sleep(0.2)
                 page.clean()
                 if difficulty == "medium":
                     cash += 3000
@@ -590,7 +588,7 @@ def main(page: ft.Page) -> None:
             ),
             ft.Row(
                 controls=[
-                    ft.Text(value=f'previous answer "{prev_right}"', size=22, color='pink')
+                    ft.Text(value=f'previous answer "{prev_right[1]}", correct answer: "{prev_right[0]}"', size=22, color='pink')
                 ]
             )
         )
@@ -606,6 +604,7 @@ def main(page: ft.Page) -> None:
             except IndexError as e:
                 print(f"Error: {e}")
                 phase_two()
+                timer_running = False
                 return
             cash_builder(
                 dictT["question"],
@@ -617,50 +616,50 @@ def main(page: ft.Page) -> None:
             )
 
     def phase_one():
-        nonlocal cash_builder_list, i
+        nonlocal cash_builder_list, i, secs, timer_running
         page.clean()
         page.add(
             ft.Column(
                 controls=[
-                    ft.Text(value="wait...", size=120,
-                            color="red")
+                    ft.Text(value="wait...", size=120, color="red")
                 ],
                 alignment=ft.MainAxisAlignment.CENTER,
             ),
         )
         page.update()
+
         timer_text = ft.Text(value="60 seconds remaining...", size=15, color="red")
-        def s60_sec():
+        secs = 60
+        timer_running = True
+
+        async def s60_sec():
             nonlocal timer_running, secs, timer_text
             while secs > 0 and timer_running:
-                time.sleep(1)
+                await asyncio.sleep(1)
                 secs -= 1
                 timer_text.value = f"{secs} seconds remaining..."
                 try:
                     timer_text.update()
-                except IndexError as e:
-                    print(f"Error: {e}")
-                    phase_two()
-                    return
                 except Exception as e:
-                    print(f"Error: {e}")
+                    print(f"Error updating timer: {e}")
 
             timer_running = False
-            print("success")
+            print("Timer finished")
             phase_two()
-            return
-        page.clean()
-        cash_builder_list = get_questions(50, "easy",'type=multiple')
-        time.sleep(5)
-        cash_builder_list_return_of_the_jedi = get_questions(30, "easy",'type=multiple')
-        cash_builder_list.extend(cash_builder_list_return_of_the_jedi)
-        i = 0
-        if cash_builder_list:
-            print(len(cash_builder_list))
-            run_next_question(timer_text)
-            timer_running = True
-            timer_thread = threading.Thread(target=s60_sec, daemon=True)
-            timer_thread.start()
+
+
+        async def load_questions():
+            nonlocal cash_builder_list, i
+            cash_builder_list = get_questions(50, "easy", 'type=multiple')
+            await asyncio.sleep(0.1)
+            cash_builder_list += get_questions(30, "easy", 'type=multiple')
+            i = 0
+
+            if cash_builder_list:
+                run_next_question(timer_text)
+
+        page.run_task(load_questions)
+        page.run_task(s60_sec)
 
     page.add(
         ft.Row(

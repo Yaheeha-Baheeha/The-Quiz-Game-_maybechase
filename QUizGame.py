@@ -27,149 +27,40 @@ def main(page: ft.Page) -> None:
     page.window.maximizable = False
     page.update()
     cash_builder_qs = 80
+    score = 0
 
     def last_phase():
         nonlocal timer_running, secs
-        secs = 120
-        timer_text = ft.Text(value="60 seconds remaining...", size=15, color="red")
-        def s120_sec():
-            nonlocal timer_running, secs, timer_text
-            while secs > 0 and timer_running:
-                time.sleep(1)
-                secs -= 1
-                timer_text.value = f"{secs} seconds remaining..."
-                try:
-                    timer_text.update()
-                except IndexError as e:
-                    print(f"Error: {e}")
-                    phase_two()
-                    return
-                except Exception as e:
-                    print(f"Error: {e}")
-        cash_builder_list = get_questions(50, 'hard','type=multiple')
-        time.sleep(5)
-        cash_builder_list_return_of_the_jedi = get_questions(30, 'hard','type=multiple')
-        cash_builder_list.extend(cash_builder_list_return_of_the_jedi)
-        i = 0
-        if cash_builder_list:
-            print(len(cash_builder_list))
-            run_next_question2(timer_text)
-            timer_running = True
-            timer_thread = threading.Thread(target=s120_sec, daemon=True)
-            timer_thread.start()
+
 
         def phase_chaser():
+            nonlocal score, cash
             page.clean()
-            smth = random.randint(19, 22)
-
-        def finally_therock(question_text, right, wrong_list, category, difficulty, timer_text):
-            nonlocal rand_list, timer_running, secs, cash, low, high, prev_right,cash_builder_qs
-            cash_builder_qs = 80
-            if timer_running == False:
-                secs = 120
-
-
-            def check_answer():
-                nonlocal cash, i, cash_builder_qs, low, high, prev_right, textanswer
-                prev_right = [right, textanswer]
-                if textanswer == right.lower():
-                    print("\n\n CORRECT \n\n")
-                    page.clean()
-                    time.sleep(0.05)
-                    page.add(
-                        ft.Row(
-                            controls=[ft.Text(value="CORRECT", size=20)],
-                            alignment=ft.MainAxisAlignment.CENTER
-                        ),
-                    )
-                    time.sleep(0.2)
-                    page.clean()
-                    if difficulty == "medium":
-                        cash += 3000
-                    elif difficulty == "easy":
-                        cash += 1500
-                    elif difficulty == "hard":
-                        cash += 5500
-
-                    i += 1
-                    cash_builder_qs -= 1
-                    print(cash_builder_qs)
-                    if cash_builder_qs > 0:
-                        run_next_question2(timer_text)
-                    else:
-                        phase_chaser()
-                        return
-                else:
-                    print(f"Wrong")
-                    i += 1
-                    cash_builder_qs -= 1
-                    print(cash_builder_qs)
-                    if cash_builder_qs > 0:
-                        run_next_question2(timer_text)
-                    else:
-                        phase_chaser()
-                        return
-                    page.update()
-                if cash <= 6000:
-                    high = cash * 10
-                    low = cash / 4
-                elif cash <= 11000:
-                    high = cash * 5
-                    low = int(cash / 2)
-                elif cash <= 16000:
-                    high = cash * int(random.choice([5, 6, 6, 6, 6]))
-                    low = 2000
-                else:
-                    high = cash * 9
-                    low = -1 * int(cash / 2)
-
-                response = ""
-
-            page.clean()
-            questions = wrong_list
-            questions.append(right)
-            rand_list = random.sample(questions, len(questions))
-
-            page.add(
-                ft.Row(
-                    controls=[ft.Text(value=f"You have ${cash}", size=18, color='green')],
-                    alignment=ft.MainAxisAlignment.END
-                ),
-                ft.Row(
-                    controls=[ft.Text(value=question_text, size=25)],
-                    alignment=ft.MainAxisAlignment.CENTER
-                ),
-                ft.Row(
-                    controls=[ft.Text(value=f"Category: {category}", size=22)],
-                    alignment=ft.MainAxisAlignment.CENTER
-                ),
-                ft.Row(
-                    controls=[timer_text],
-                    alignment=ft.MainAxisAlignment.CENTER
-                ),
-                ft.Row(
-                    controls=[
-                        ft.TextField(
-                            on_change=handle_field_change,
-                            label="Response",
-                            hint_text="skill issue",
-                        ),
-                        button := ft.Button(
-                            content=ft.Text("confirm"),
-                            data=textanswer,
-                            on_click=check_answer,
-                        )
-                    ],
-                    alignment=ft.MainAxisAlignment.CENTER
-                ),
-                ft.Row(
-                    controls=[
-                        ft.Text(value=f'previous answer "{prev_right}"', size=22, color='pink')
-                    ]
-                )
-            )
             page.update()
-
+            smth = random.gauss(19, 5)
+            smth = max(3 , min(25, smth))
+            smth = int(smth)
+            if score > smth:
+                page.clean()
+                page.add(
+                    ft.Column(
+                        controls=[
+                            ft.Text(value=f"YOU WIN ${cash} \n you got {score} right, chaser got {smth} right", size=80, color="green")
+                        ],
+                        alignment=ft.MainAxisAlignment.CENTER,
+                    ),
+                )
+                page.update()
+            else:
+                page.clean()
+                page.add(
+                    ft.Column(
+                        controls=[
+                            ft.Text(value=f"YOU Loose ${cash} \n you got {score} right, chaser got {smth} right",size=80, color="red")
+                        ],
+                        alignment=ft.MainAxisAlignment.CENTER,
+                    ),
+                )
 
         def run_next_question2(timer_text):
             nonlocal i, cash_builder_list, timer_running
@@ -190,6 +81,133 @@ def main(page: ft.Page) -> None:
                     dictT["difficulty"],
                     timer_text
                 )
+
+
+        def finally_therock(question_text, right, wrong_list, category, difficulty, timer_text):
+            nonlocal rand_list, timer_running, secs, score, prev_right,cash_builder_qs
+            cash_builder_qs = 80
+            right = right
+            if timer_running == False:
+                secs = 120
+
+
+
+
+            page.clean()
+
+            page.add(
+                ft.Row(
+                    controls=[ft.Text(value=f"You have ${cash}", size=18, color='green')],
+                    alignment=ft.MainAxisAlignment.END
+                ),
+                ft.Row(
+                    controls=[ft.Text(value=question_text, size=22)],
+                    alignment=ft.MainAxisAlignment.CENTER
+                ),
+                ft.Row(
+                    controls=[ft.Text(value=f"Category: {category}", size=22)],
+                    alignment=ft.MainAxisAlignment.CENTER
+                ),
+                ft.Row(
+                    controls=[timer_text],
+                    alignment=ft.MainAxisAlignment.CENTER
+                ),
+                ft.Row(
+                    controls=[
+                        ft.TextField(
+                            on_change=handle_field_change,
+                            label="Response",
+                            hint_text="skill issue",
+                        ),
+                        button := ft.Button(
+                            content=ft.Text("confirm"),
+                            data=right,
+                            on_click=check_answer,
+                        )
+                    ],
+                    alignment=ft.MainAxisAlignment.CENTER
+                ),
+                ft.Row(
+                    controls=[
+                        ft.Text(value=f'previous answer "{prev_right}"', size=22, color='pink')
+                    ]
+                )
+            )
+            page.update()
+        secs = 120
+        timer_text = ft.Text(value="60 seconds remaining...", size=15, color="red")
+        def check_answer(e):
+            nonlocal score, i, cash_builder_qs, prev_right, textanswer
+
+            rights = e.control.data
+
+            prev_right = [rights, textanswer]
+            if textanswer.lower() == rights.lower():
+                print("\n\n CORRECT \n\n")
+                page.clean()
+                time.sleep(0.05)
+                page.add(
+                    ft.Row(
+                        controls=[ft.Text(value="CORRECT", size=20)],
+                        alignment=ft.MainAxisAlignment.CENTER
+                    ),
+                )
+                time.sleep(0.2)
+                page.update()
+                page.clean()
+                score += 1
+
+                i += 1
+                cash_builder_qs -= 1
+                print(cash_builder_qs)
+                if cash_builder_qs > 0:
+                    run_next_question2(timer_text)
+                else:
+                    phase_chaser()
+                    return
+            else:
+                print(f"Wrong")
+                i += 1
+                cash_builder_qs -= 1
+                print(cash_builder_qs)
+                if cash_builder_qs > 0:
+                    run_next_question2(timer_text)
+                else:
+                    phase_chaser(score)
+                    return
+                page.update()
+
+            response = ""
+
+        def s120_sec():
+            nonlocal timer_running, secs, timer_text
+            while secs > 0 and timer_running:
+                time.sleep(1)
+                secs -= 1
+                timer_text.value = f"{secs} seconds remaining..."
+                try:
+                    timer_text.update()
+                except IndexError as e:
+                    print(f"Error: {e}")
+                    phase_two()
+                    return
+                except Exception as e:
+                    print(f"Error: {e}")
+        cash_builder_list = get_questions(50, 'hard','type=multiple')
+        time.sleep(5)
+        cash_builder_list_return_of_the_jedi = get_questions(30, 'hard','type=multiple')
+        cash_builder_list.extend(cash_builder_list_return_of_the_jedi)
+        i = 0
+
+        if cash_builder_list:
+            print(len(cash_builder_list))
+            run_next_question2(timer_text)
+            timer_running = True
+            timer_thread = threading.Thread(target=s120_sec, daemon=True)
+            timer_thread.start()
+
+
+
 
 
     def handle_field_change(e):
@@ -224,6 +242,7 @@ def main(page: ft.Page) -> None:
         l = 0
         p = 0
         page.clean()
+        page.update()
         chase_ladder = [
             ft.Container(height=90, width=600, bgcolor="0xff0022ff"),
             ft.Container(height=90, width=600, bgcolor="0xff0022ff"),
@@ -262,10 +281,13 @@ def main(page: ft.Page) -> None:
                 response = answer.control.data
                 if response == right:
                     l += 1
-                    chase_ladder[l].bgcolor = "0xff3380de"
+                    try:
+                        chase_ladder[l].bgcolor = "0xff3380de"
+                    except Exception as e:
+                        print(f"Error: {e}")
                     if l >= 7:
-                        pass
-                        #last_phase()
+                        last_phase()
+                        return
                     else:
                         i+=1
                         start_question(h2h_list[i]["question"], h2h_list[i]["correct_answer"],
@@ -334,7 +356,7 @@ def main(page: ft.Page) -> None:
                         alignment=ft.MainAxisAlignment.END
                     ),
                     ft.Row(
-                        controls=[ft.Text(value=question_text, size=25)],
+                        controls=[ft.Text(value=question_text, size=22)],
                         alignment=ft.MainAxisAlignment.CENTER
                     ),
                     ft.Row(
@@ -540,7 +562,7 @@ def main(page: ft.Page) -> None:
                 alignment=ft.MainAxisAlignment.END
             ),
             ft.Row(
-                controls=[ft.Text(value=question_text, size=25)],
+                controls=[ft.Text(value=question_text, size=22)],
                 alignment=ft.MainAxisAlignment.CENTER
             ),
             ft.Row(
@@ -597,6 +619,16 @@ def main(page: ft.Page) -> None:
     def phase_one():
         nonlocal cash_builder_list, i
         page.clean()
+        page.add(
+            ft.Column(
+                controls=[
+                    ft.Text(value="wait...", size=120,
+                            color="red")
+                ],
+                alignment=ft.MainAxisAlignment.CENTER,
+            ),
+        )
+        page.update()
         timer_text = ft.Text(value="60 seconds remaining...", size=15, color="red")
         def s60_sec():
             nonlocal timer_running, secs, timer_text

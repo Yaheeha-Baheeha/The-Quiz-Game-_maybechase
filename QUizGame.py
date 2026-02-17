@@ -256,13 +256,13 @@ def main(page: ft.Page) -> None:
         page.clean()
         page.update()
         chase_ladder = [
-            ft.Container(height=90, width=600, bgcolor="0xff0022ff"),
-            ft.Container(height=90, width=600, bgcolor="0xff0022ff"),
-            ft.Container(height=90, width=600, bgcolor="0xff0022ff"),
-            ft.Container(height=90, width=600, bgcolor="0xff0022ff"),
-            ft.Container(height=90, width=600, bgcolor="0xff0022ff"),
-            ft.Container(height=90, width=600, bgcolor="0xff0022ff"),
-            ft.Container(height=90, width=600, bgcolor="0xff0022ff"),
+            ft.Container(height=90, width=600, bgcolor="0xff00ff99"),
+            ft.Container(height=90, width=600, bgcolor="0xff00ff99"),
+            ft.Container(height=90, width=600, bgcolor="0xff00ff99"),
+            ft.Container(height=90, width=600, bgcolor="0xff00ff99"),
+            ft.Container(height=90, width=600, bgcolor="0xff00ff99"),
+            ft.Container(height=90, width=600, bgcolor="0xff00ff99"),
+            ft.Container(height=90, width=600, bgcolor="0xffffd700"),
         ]
         right_side = ft.Container(
             content=ft.Column(

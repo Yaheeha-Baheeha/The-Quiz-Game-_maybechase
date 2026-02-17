@@ -183,6 +183,7 @@ def main(page: ft.Page) -> None:
 
         async def s120_sec():
             nonlocal timer_running, secs, timer_text
+            await asyncio.sleep(4)
             while secs > 0 and timer_running:
                 await asyncio.sleep(1)
                 secs -= 1
@@ -207,7 +208,7 @@ def main(page: ft.Page) -> None:
                 ),
             )
             cash_builder_list = get_questions(50, 'hard', 'type=multiple')
-            time.sleep(5)
+            await asyncio.sleep(5)
             cash_builder_list += get_questions(30, 'hard', 'type=multiple')
             i = 0
             if cash_builder_list:

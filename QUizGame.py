@@ -103,7 +103,7 @@ def main(page: ft.Page) -> None:
                     alignment=ft.MainAxisAlignment.END
                 ),
                 ft.Row(
-                    controls=[ft.Text(value=question_text, size=22, expand = True,)],
+                    controls=[ft.Text(value=question_text, size=22, expand = True,text_align=ft.TextAlign.CENTER,)],
                     alignment=ft.MainAxisAlignment.CENTER,
                 ),
                 ft.Row(
@@ -131,7 +131,7 @@ def main(page: ft.Page) -> None:
                 ),
                 ft.Row(
                     controls=[
-                        ft.Text(value=f'previous answer "{prev_right[1]}", correct answer: "{prev_right[0]}"', size=22, expand = True, color='pink')
+                        ft.Text(value=f'previous answer "{prev_right[1]}", correct answer: "{prev_right[0]}"', size=22, expand = True, color='pink', )
                     ]
                 )
             )
@@ -197,8 +197,17 @@ def main(page: ft.Page) -> None:
 
         async def load_questions():
             nonlocal cash_builder_list, i
+            page.clean()
+            page.add(
+                ft.Column(
+                    controls=[
+                        ft.Text(value="wait....", size=120, color="red")
+                    ],
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
+            )
             cash_builder_list = get_questions(50, 'hard', 'type=multiple')
-            await asyncio.sleep(0.1)
+            time.sleep(5)
             cash_builder_list += get_questions(30, 'hard', 'type=multiple')
             i = 0
             if cash_builder_list:
@@ -422,7 +431,7 @@ def main(page: ft.Page) -> None:
                 l = 2
                 p = -1
             right_side.update()
-            h2h_list = get_questions(30, diff, "type=multiple")
+            h2h_list = get_questions(30, f"difficulty={diff}", "type=multiple")
             start_question(h2h_list[i]["question"],h2h_list[i]["correct_answer"],h2h_list[i]["incorrect_answers"],h2h_list[i]["category"],h2h_list[i]["difficulty"])
 
 
@@ -653,9 +662,9 @@ def main(page: ft.Page) -> None:
 
         async def load_questions():
             nonlocal cash_builder_list, i
-            cash_builder_list = get_questions(50, "easy", 'type=multiple')
-            await asyncio.sleep(0.1)
-            cash_builder_list += get_questions(30, "easy", 'type=multiple')
+            cash_builder_list = get_questions(50, "", 'type=multiple')
+            time.sleeptime.sleep(5)
+            cash_builder_list += get_questions(30, "", 'type=multiple')
             i = 0
 
             if cash_builder_list:

@@ -663,7 +663,7 @@ def main(page: ft.Page) -> None:
         async def load_questions():
             nonlocal cash_builder_list, i
             cash_builder_list = get_questions(50, "", 'type=multiple')
-            time.sleeptime.sleep(5)
+            time.sleep(5)
             cash_builder_list += get_questions(30, "", 'type=multiple')
             i = 0
 

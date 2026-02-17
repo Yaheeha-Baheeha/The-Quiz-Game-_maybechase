@@ -103,11 +103,11 @@ def main(page: ft.Page) -> None:
                     alignment=ft.MainAxisAlignment.END
                 ),
                 ft.Row(
-                    controls=[ft.Text(value=question_text, size=22)],
-                    alignment=ft.MainAxisAlignment.CENTER
+                    controls=[ft.Text(value=question_text, size=22, expand = True,)],
+                    alignment=ft.MainAxisAlignment.CENTER,
                 ),
                 ft.Row(
-                    controls=[ft.Text(value=f"Category: {category}", size=22)],
+                    controls=[ft.Text(value=f"Category: {category}", size=22, expand = True, text_align=ft.TextAlign.CENTER,)],
                     alignment=ft.MainAxisAlignment.CENTER
                 ),
                 ft.Row(
@@ -131,7 +131,7 @@ def main(page: ft.Page) -> None:
                 ),
                 ft.Row(
                     controls=[
-                        ft.Text(value=f'previous answer "{prev_right[1]}", correct answer: "{prev_right[0]}"', size=22, color='pink')
+                        ft.Text(value=f'previous answer "{prev_right[1]}", correct answer: "{prev_right[0]}"', size=22, expand = True, color='pink')
                     ]
                 )
             )
@@ -145,6 +145,7 @@ def main(page: ft.Page) -> None:
             rights = e.control.data
 
             prev_right = [rights, textanswer]
+            print(prev_right)
             if textanswer.lower() == rights.lower():
                 print("\n\n CORRECT \n\n")
                 page.clean()
@@ -227,6 +228,7 @@ def main(page: ft.Page) -> None:
                     q['question'] = html.unescape(q['question'])
                     q['correct_answer'] = html.unescape(q['correct_answer'])
                     q['incorrect_answers'] = [html.unescape(w) for w in q['incorrect_answers']]
+                    q['category'] = html.unescape(q['category'])
                 return results
             return []
         except Exception as e:
@@ -285,7 +287,7 @@ def main(page: ft.Page) -> None:
                         chase_ladder[l].bgcolor = "0xff3380de"
                     except Exception as e:
                         print(f"Error: {e}")
-                    if l >= 7:
+                    if l >= 6:
                         last_phase()
                         return
                     else:
@@ -356,11 +358,11 @@ def main(page: ft.Page) -> None:
                         alignment=ft.MainAxisAlignment.END
                     ),
                     ft.Row(
-                        controls=[ft.Text(value=question_text, size=22)],
+                        controls=[ft.Text(value=question_text, size=22, expand = True, text_align=ft.TextAlign.CENTER,)],
                         alignment=ft.MainAxisAlignment.CENTER
                     ),
                     ft.Row(
-                        controls=[ft.Text(value=f"Category: {category}", size=22)],
+                        controls=[ft.Text(value=f"Category: {category}", size=22, expand = True, text_align=ft.TextAlign.CENTER,)],
                         alignment=ft.MainAxisAlignment.CENTER
                     ),
                     ft.Row(
@@ -470,7 +472,7 @@ def main(page: ft.Page) -> None:
             ft.Row(
                 controls=[
                     left_side,
-                    right_side,  
+                    right_side,
                 ],
                 expand=True,
             )
@@ -560,11 +562,11 @@ def main(page: ft.Page) -> None:
                 alignment=ft.MainAxisAlignment.END
             ),
             ft.Row(
-                controls=[ft.Text(value=question_text, size=22)],
+                controls=[ft.Text(value=question_text, size=22, expand = True, text_align=ft.TextAlign.CENTER,)],
                 alignment=ft.MainAxisAlignment.CENTER
             ),
             ft.Row(
-                controls=[ft.Text(value=f"Category: {category}", size=22)],
+                controls=[ft.Text(value=f"Category: {category}", size=22, expand = True, text_align=ft.TextAlign.CENTER,)],
                 alignment=ft.MainAxisAlignment.CENTER
             ),
             ft.Row(
@@ -588,8 +590,9 @@ def main(page: ft.Page) -> None:
             ),
             ft.Row(
                 controls=[
-                    ft.Text(value=f'previous answer "{prev_right[1]}", correct answer: "{prev_right[0]}"', size=22, color='pink')
-                ]
+                    ft.Text(value=f'previous answer "{prev_right[1]}", correct answer: "{prev_right[0]}"', size=22, expand = True, color='pink')
+                ],
+
             )
         )
         page.update()

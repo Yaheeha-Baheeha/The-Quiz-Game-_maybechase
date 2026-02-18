@@ -58,7 +58,7 @@ def main(page: ft.Page) -> None:
                 page.add(
                     ft.Column(
                         controls=[
-                            ft.Text(value=f"YOU Loose ${cash} \n you got {score} right, chaser got {smth} right",size=80, color="red")
+                            ft.Text(value=f"YOU Lose ${cash} \n you got {score} right, chaser got {smth} right",size=80, color="red")
                         ],
                         alignment=ft.MainAxisAlignment.CENTER,
                     ),
@@ -146,7 +146,7 @@ def main(page: ft.Page) -> None:
         timer_running = True
         def check_answer(e):
             nonlocal score, i, cash_builder_qs, prev_right, textanswer
-
+            cash_builder_qs -= 1
             rights = e.control.data
 
             prev_right = [rights, textanswer]
@@ -180,7 +180,7 @@ def main(page: ft.Page) -> None:
                 if cash_builder_qs > 0:
                     run_next_question2(timer_text)
                 else:
-                    phase_chaser(score)
+                    phase_chaser()
                     return
                 page.update()
 
@@ -528,7 +528,7 @@ def main(page: ft.Page) -> None:
         def check_answer():
             nonlocal cash, i, cash_builder_qs, low, high, prev_right, textanswer
             prev_right = [right, textanswer]
-            if textanswer == right.lower():
+            if textanswer.lower() == right.lower():
                 print("\n\n CORRECT \n\n")
                 page.clean()
                 page.add(

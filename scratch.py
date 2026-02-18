@@ -25,4 +25,4 @@ def main(page: ft.Page):
             alignment=ft.MainAxisAlignment.CENTER
         )
     )
-ft.run(main)
+ft.app(main)

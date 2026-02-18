@@ -93,7 +93,11 @@ def main(page: ft.Page) -> None:
             if timer_running == False:
                 secs = 120
 
-
+            questions = wrong_list
+            questions.append(right)
+            rand_list = random.sample(questions, len(questions))
+            if " not " in question_text.lower():
+                question_text += f"\n Options: {rand_list[0]}, {rand_list[1]}, {rand_list[2]}, {rand_list[3]}."
 
 
             page.clean()
@@ -579,6 +583,8 @@ def main(page: ft.Page) -> None:
         questions = wrong_list
         questions.append(right)
         rand_list = random.sample(questions, len(questions))
+        if " not " in question_text.lower():
+            question_text += f"\n Options: {rand_list[0]}, {rand_list[1]}, {rand_list[2]}, {rand_list[3]}."
 
         page.add(
             ft.Row(

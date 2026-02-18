@@ -22,6 +22,7 @@ def main(page: ft.Page) -> None:
     timer_running = True
     page.title = 'The Chase'
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
+    page.bgcolor = ft.Colors.TRANSPARENT
     page.window.width = 1280
     page.window.height = 720
     page.window.resizable = False
@@ -240,10 +241,23 @@ def main(page: ft.Page) -> None:
                     q['incorrect_answers'] = [html.unescape(w) for w in q['incorrect_answers']]
                     q['category'] = html.unescape(q['category'])
                 return results
-            return []
+            page.decoration = ft.BoxDecoration(
+                image=ft.DecorationImage(
+                    src="background_image.jpeg",
+                    fit=ft.BoxFit.COVER,
+                ),
+            )
+            return [{'question': 'Buddy theres no wifi', 'correct_answer': 'brr', 'incorrect_answers': ['brrr','br','brrrr'], 'category': 'buddy no wifi'}]
+
         except Exception as e:
             print(f"Error: {e}")
-            return []
+            page.decoration = ft.BoxDecoration(
+                image=ft.DecorationImage(
+                    src="background_image.jpeg",
+                    fit=ft.BoxFit.COVER,
+                ),
+            )
+            return [{'question': 'Buddy API is down sorry', 'correct_answer': 'brr', 'incorrect_answers': ['brrr','br','brrrr'], 'category': 'buddy no API','difficulty': 'easy'}]
 
     def phase_two():
         nonlocal cash, low, high, page, i

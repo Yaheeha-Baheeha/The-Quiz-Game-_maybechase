@@ -199,7 +199,7 @@ def main(page: ft.Page) -> None:
                 try:
                     timer_text.update()
                 except Exception as e:
-                    print(f"Error updating timer: {e}")
+                    print(f"Error updating timer{random.randint(1,100)}: {e}")
             timer_running = False
             print("120-second timer finished")
             if fase_tchaysar:
@@ -679,7 +679,7 @@ def main(page: ft.Page) -> None:
                 try:
                     timer_text.update()
                 except Exception as e:
-                    print(f"Error updating timer: {e}")
+                    print(f"Error updating timer{int(random.random()*100)}: {e}")
 
             timer_running = False
             print("Timer finished")

@@ -13,6 +13,8 @@ def main(page: ft.Page) -> None:
     high = 0
     low = 0
     i = 0
+    fase_too = True
+    fase_tchaysar= True
     lost = False
     secs = 60
     textanswer = ""
@@ -32,11 +34,13 @@ def main(page: ft.Page) -> None:
     score = 0
 
     def last_phase():
-        nonlocal timer_running, secs
+        nonlocal timer_running, secs, cash_builder_qs
+        cash_builder_qs = 80
 
 
         def phase_chaser():
-            nonlocal score, cash
+            nonlocal score, cash, fase_tchaysar
+            fase_tchaysar = False
             page.clean()
             page.update()
             smth = random.gauss(19, 5)
@@ -88,7 +92,6 @@ def main(page: ft.Page) -> None:
 
         def finally_therock(question_text, right, wrong_list, category, difficulty, timer_text):
             nonlocal rand_list, timer_running, secs, score, prev_right,cash_builder_qs
-            cash_builder_qs = 80
             right = right
             if timer_running == False:
                 secs = 120
@@ -187,7 +190,7 @@ def main(page: ft.Page) -> None:
             response = ""
 
         async def s120_sec():
-            nonlocal timer_running, secs, timer_text
+            nonlocal timer_running, secs, timer_text, fase_tchaysar
             await asyncio.sleep(4)
             while secs > 0 and timer_running:
                 await asyncio.sleep(1)
@@ -199,7 +202,8 @@ def main(page: ft.Page) -> None:
                     print(f"Error updating timer: {e}")
             timer_running = False
             print("120-second timer finished")
-            phase_chaser()
+            if fase_tchaysar:
+                phase_chaser()
 
         async def load_questions():
             nonlocal cash_builder_list, i
@@ -264,8 +268,9 @@ def main(page: ft.Page) -> None:
             return [{'question': 'Buddy API is down sorry', 'correct_answer': 'brr', 'incorrect_answers': ['brrr','br','brrrr'], 'category': 'buddy no API','difficulty': 'easy'}]
 
     def phase_two():
-        nonlocal cash, low, high, page, i
+        nonlocal cash, low, high, page, i, fase_too
         i = 0
+        fase_too = False
         h2h_list = []
         page.window.width = 1920
         page.window.height = 720
@@ -455,46 +460,46 @@ def main(page: ft.Page) -> None:
 
 
         left_side = ft.Container(
-                        content=ft.Column(
-                            controls=[
-                                ft.Row(
-                                    controls=[
-                                        ft.Text(value="Choose your offer", size=120)
-                                    ],
-                                    alignment=ft.MainAxisAlignment.CENTER
-                                ),
-                                ft.Row(
-                                    controls=[
-                                        low_offer := ft.Button(
-                                            content=ft.Text(value=f"Low offer: \n$ {low}", size=60),
-                                            data='easy',
-                                            on_click=head_to_head
-                                        ),
-                                        cash_offer := ft.Button(
-                                            content=ft.Text(value=f"Cash offer: \n$ {cash}", size=60),
-                                            data='medium',
-                                            on_click=head_to_head
-                                        ),
-                                        high_offer := ft.Button(
-                                            content=ft.Text(value=f"High offer: \n$ {high}", size=60),
-                                            data='hard',
-                                            on_click=head_to_head
-                                        ),
-                                    ],
-                                    alignment=ft.MainAxisAlignment.CENTER
-                                ),
-                                ft.Row(
-                                    controls=[
-                                        ft.Text(
-                                            value="^This gives you a 4 questions advantage.                          This gives you 3.                                                  This gives you 2",
-                                            size=20)
-                                    ]
-                                )
-                            ]
-                        ),
-                        bgcolor="blue",
-                        expand=2,
+            content=ft.Column(
+                controls=[
+                    ft.Row(
+                        controls=[
+                            ft.Text(value="Choose your offer", size=120)
+                        ],
+                        alignment=ft.MainAxisAlignment.CENTER
+                    ),
+                    ft.Row(
+                        controls=[
+                            low_offer := ft.Button(
+                                content=ft.Text(value=f"Low offer: \n$ {low}", size=60),
+                                data='easy',
+                                on_click=head_to_head
+                            ),
+                            cash_offer := ft.Button(
+                                content=ft.Text(value=f"Cash offer: \n$ {cash}", size=60),
+                                data='medium',
+                                on_click=head_to_head
+                            ),
+                            high_offer := ft.Button(
+                                content=ft.Text(value=f"High offer: \n$ {high}", size=60),
+                                data='hard',
+                                on_click=head_to_head
+                            ),
+                        ],
+                        alignment=ft.MainAxisAlignment.CENTER
+                    ),
+                    ft.Row(
+                        controls=[
+                            ft.Text(
+                                value="^This gives you a 4 questions advantage.                          This gives you 3.                                                  This gives you 2",
+                                size=20)
+                        ]
                     )
+                ]
+            ),
+            bgcolor="blue",
+            expand=2,
+        )
 
         page.add(
             ft.Row(
@@ -666,7 +671,7 @@ def main(page: ft.Page) -> None:
         timer_running = True
 
         async def s60_sec():
-            nonlocal timer_running, secs, timer_text
+            nonlocal timer_running, secs, timer_text,fase_too
             while secs > 0 and timer_running:
                 await asyncio.sleep(1)
                 secs -= 1
@@ -678,7 +683,8 @@ def main(page: ft.Page) -> None:
 
             timer_running = False
             print("Timer finished")
-            phase_two()
+            if fase_too:
+                phase_two()
 
 
         async def load_questions():

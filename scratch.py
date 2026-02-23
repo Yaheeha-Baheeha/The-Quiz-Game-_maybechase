@@ -1,28 +1,26 @@
-import flet as ft
-from flet import TextField
-import requests
-import html
-import random
-import time
-import threading
-import os
-import asyncio
-def main(page: ft.Page):
-    page.add(
-        ft.Row(
-            controls=[ft.Text(value=f"You have $", size=18, color='green')],
-            alignment=ft.MainAxisAlignment.END
-        ),
-        ft.Row(
-            controls=[
-                ft.Text(
-                    value="12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890",
-                    size=22,
-                    text_align=ft.TextAlign.CENTER,
-                    expand=True
-                )
-            ],
-            alignment=ft.MainAxisAlignment.CENTER
-        )
-    )
-ft.app(main)
+import json
+
+def save_highscore(cash, point):
+    try:
+        with open("highscores.json", "r", encoding="utf-8") as file:
+            highscore = json.load(file)
+    
+    except FileNotFoundError:
+        highscore = []
+        return "chicken"
+    
+    except Exception as e:
+        return (f"Smth got fricked! Error: {e}")
+    
+    
+    highscore.append({"score": point, "cash": cash})
+    print(highscore)
+    
+    try:
+        with open("highscores.json", "w", encoding="utf-8") as file:
+            json.dump(highscore, file, indent=4)
+    except Exception as e:
+        return (f"Smth got fricked! Error: {e}")
+        
+print(save_highscore(20000, 12))
+

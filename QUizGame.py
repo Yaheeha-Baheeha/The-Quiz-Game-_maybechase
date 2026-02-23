@@ -7,6 +7,7 @@ import time
 import threading
 import os
 import asyncio
+import json
 
 def main(page: ft.Page) -> None:
     cash = 0
@@ -32,7 +33,31 @@ def main(page: ft.Page) -> None:
     page.update()
     cash_builder_qs = 80
     score = 0
-
+    
+    
+    def save_highscore(cash, point):
+        try:
+            with open("highscores.json", "r", encoding="utf-8") as file:
+                highscore = json.load(file)
+        
+        except FileNotFoundError:
+            highscore = []
+            return "chicken"
+        
+        except Exception as e:
+            return (f"Smth got fricked! Error: {e}")
+        
+        
+        highscore.append({"score": point, "cash": cash})
+        print(highscore)
+        
+        try:
+            with open("highscores.json", "w", encoding="utf-8") as file:
+                json.dump(highscore, file, indent=4)
+        except Exception as e:
+            return (f"Smth got fricked! Error: {e}")
+        
+        
     def last_phase():
         nonlocal timer_running, secs, cash_builder_qs
         cash_builder_qs = 80
@@ -57,6 +82,7 @@ def main(page: ft.Page) -> None:
                     ),
                 )
                 page.update()
+                save_highscore(cash,score)
             else:
                 page.clean()
                 page.add(

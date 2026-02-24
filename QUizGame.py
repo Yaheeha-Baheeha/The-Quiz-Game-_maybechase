@@ -180,7 +180,7 @@ def main(page: ft.Page) -> None:
 
             prev_right = [rights, textanswer]
             print(prev_right)
-            if textanswer.lower() == rights.lower():
+            if textanswer.lower().strip() == rights.lower().strip():
                 print("\n\n CORRECT \n\n")
                 page.clean()
                 page.add(
@@ -559,7 +559,7 @@ def main(page: ft.Page) -> None:
         def check_answer():
             nonlocal cash, i, cash_builder_qs, low, high, prev_right, textanswer
             prev_right = [right, textanswer]
-            if textanswer.lower() == right.lower():
+            if textanswer.lower().strip() == right.lower().strip():
                 print("\n\n CORRECT \n\n")
                 page.clean()
                 page.add(
